@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">懿懿百宝箱</string>
-    <string name="title_class_table">课表</string>
-    <string name="title_memo">备忘录</string>
-    <string name="title_center">个人中心</string>
-    <string name="currentColor">#FF000000</string>
-</resources>
