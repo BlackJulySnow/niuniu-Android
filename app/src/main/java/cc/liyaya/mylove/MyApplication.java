@@ -19,4 +19,5 @@ public class MyApplication extends Application {
         HeConfig.init("HE2110301116451245", "910cb2d6de04451093b5a0e723a442d2");
         HeConfig.switchToDevService();
     }
+    //12312312
 }
