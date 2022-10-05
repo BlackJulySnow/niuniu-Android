@@ -15,11 +15,17 @@ import cc.liyaya.mylove.model.Class;
 import cc.liyaya.mylove.model.Memo;
 import cc.liyaya.mylove.model.Weather;
 
-@Database(entities = {Class.class, Weather.class, Memo.class}, version = 1)
+@Database(entities = {Class.class, Weather.class, Memo.class},
+        version = 2,autoMigrations = {
+        @AutoMigration (from = 1, to = 2)
+    })
 public abstract class DatabaseUsage extends RoomDatabase {
     public abstract ClassDao classDao();
+
     public abstract WeatherDao weatherDao();
+
     public abstract MemoDao memoDao();
+
     private static final String DB_NAME = "NiuNiu.db";
     private static volatile DatabaseUsage instance;
 
@@ -29,11 +35,12 @@ public abstract class DatabaseUsage extends RoomDatabase {
         }
         return instance;
     }
+
     private static DatabaseUsage create(final Context context) {
         return Room.databaseBuilder(
-                context,
-                DatabaseUsage.class,
-                DB_NAME)
+                        context,
+                        DatabaseUsage.class,
+                        DB_NAME)
                 .allowMainThreadQueries()
                 .build();
     }

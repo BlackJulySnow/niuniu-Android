@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         // menu should be considered as top level destinations.
         new Thread(new ClassThread()).start();
         new Thread(new WeatherThread(this)).start();
-//        new Thread(new MemoThread()).start();
+        new Thread(new MemoThread()).start();
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_class_table, R.id.navigation_dashboard, R.id.navigation_center)
                 .build();
