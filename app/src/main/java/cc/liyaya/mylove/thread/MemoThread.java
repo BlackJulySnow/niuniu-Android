@@ -40,7 +40,8 @@ public class MemoThread implements Runnable{
                 Log.i(TAG,str);
                 List<Memo> changedMemos = memoDao.getChanged();
                 for (Memo memo : changedMemos){//上传修改过的
-                    HttpUtil.postJson(MyConstant.MEMO_UPDATE,new Gson().toJson(memo));
+                    Log.e(TAG,new Gson().toJson(memo));
+                    HttpUtil.postJson(MyConstant.MEMO_UPDATE, new Gson().toJson(memo));
                     memo.setChanged(false);
                     memoDao.insert(memo);
                 }
@@ -53,10 +54,10 @@ public class MemoThread implements Runnable{
                         memoDao.insert(remoteMemo);
                     }else{
                         flags[localMemos.indexOf(localMemo)] = true;
-                        if (remoteMemo.getDate() > localMemo.getDate()){
+                        if (remoteMemo.getDate() > localMemo.getDate()){//远程文件比较新
                             memoDao.update(remoteMemo);
-                        }else {
-                            HttpUtil.postJson(MyConstant.MEMO_UPDATE,new Gson().toJson(remoteMemo));
+                    }else if (remoteMemo.getDate() < localMemo.getDate()){//本地文件比较新
+                            HttpUtil.postJson(MyConstant.MEMO_UPDATE,new Gson().toJson(localMemo));
                         }
                     }
                 }

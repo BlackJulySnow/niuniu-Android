@@ -54,21 +54,8 @@ public class Memo {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-    @ColumnInfo(defaultValue = "0")
+//    @ColumnInfo(defaultValue = "0")
     private boolean deleted;
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        Memo memo = (Memo) o;
-//        return id == memo.id && date == memo.date && deleted == memo.deleted && title.equals(memo.title) && context.equals(memo.context);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(id, title, date, context, deleted);
-//    }
 
         @Override
     public boolean equals(Object o) {

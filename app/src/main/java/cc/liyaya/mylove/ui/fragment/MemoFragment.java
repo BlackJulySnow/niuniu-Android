@@ -111,7 +111,7 @@ public class MemoFragment extends Fragment {
             if (id != -1){
                 Memo memo = memoDao.findById(id);
                 memoDao.updateDeletedById(id);
-                HttpUtil.postJson(MyConstant.MEMO_UPDATE, new Gson().toJson(memoDao.findById(id)), new Callback() {
+                HttpUtil.postJson(MyConstant.MEMO_UPDATE, new Gson().toJson(memoDao.findById(id)), new Callback() {//删除的时候没有网络
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         memo.setChanged(true);
