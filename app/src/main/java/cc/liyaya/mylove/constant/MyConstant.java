@@ -8,4 +8,7 @@ public class MyConstant {
     public static String TokenURL = "http://liyaya.cc:8000/schedule/adduser/";
     public static String PushToken = "";
     public static String PushTestURL = "http://liyaya.cc:8000/schedule/pushOne";
+    public static String MEMO_QUERY = "http://10.0.38.246:8080/memo/queryAll";
+    public static String MEMO_ADD = "http://10.0.38.246:8080/memo/add";
+    public static String MEMO_UPDATE = "http://10.0.38.246:8080/memo/update";
 }

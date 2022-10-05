@@ -3,6 +3,7 @@ package cc.liyaya.mylove.dao;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -28,7 +29,8 @@ public interface MemoDao {
 
     @Insert
     void insert(Memo... memos);
-    @Insert
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(Memo memo);
 
     @Update
@@ -39,4 +41,7 @@ public interface MemoDao {
 
     @Query("UPDATE Memo SET deleted = 1 WHERE id = :id")
     void updateDeletedById(long id);
+
+    @Query("SELECT * FROM Memo WHERE changed = 1")
+    List<Memo> getChanged();
 }
