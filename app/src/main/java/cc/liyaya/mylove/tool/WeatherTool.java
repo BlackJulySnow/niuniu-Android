@@ -3,6 +3,7 @@ package cc.liyaya.mylove.tool;
 import static android.content.Context.LOCATION_SERVICE;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -33,6 +34,31 @@ public class WeatherTool {
             }
             for (String provider : providers) {
                 Log.e(TAG, provider);
+                Location l = locationManager.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (location == null || l.getAccuracy() < location.getAccuracy()) {
+                    Log.i(TAG, String.valueOf(l.getLatitude()));
+                    Log.i(TAG, String.valueOf(l.getLongitude()));
+                    location = l;
+                }
+            }
+        }
+        return location;
+    }
+    public static Location getLocation(){
+        if (ActivityCompat.checkSelfPermission(MyApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MyApplication.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+        Location location = null;
+        LocationManager locationManager = (LocationManager) MyApplication.getContext().getSystemService(LOCATION_SERVICE);
+        if (locationManager == null) {
+            Log.e(TAG, "null");
+        } else {
+            List<String> providers = locationManager.getProviders(true);
+            for (String provider : providers) {
+
                 Location l = locationManager.getLastKnownLocation(provider);
                 if (l == null) {
                     continue;

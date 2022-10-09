@@ -39,9 +39,6 @@ public interface MemoDao {
     @Query("SELECT * FROM Memo WHERE id = :id")
     Memo findById(long id);
 
-    @Query("UPDATE Memo SET deleted = 1 WHERE id = :id")
-    void updateDeletedById(long id);
-
     @Query("SELECT * FROM Memo WHERE changed = 1")
     List<Memo> getChanged();
 }

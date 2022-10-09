@@ -26,4 +26,12 @@ public class DateUtil {
         c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         return c.getTime().getTime() / 1000 * 1000;
     }
+    public static int getYear(){
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(Calendar.YEAR);
+    }
+    public static int getMonth(){
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(Calendar.MONTH);
+    }
 }

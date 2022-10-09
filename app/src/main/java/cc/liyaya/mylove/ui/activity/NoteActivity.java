@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,9 +15,11 @@ import cc.liyaya.mylove.R;
 import cc.liyaya.mylove.databinding.ActivityNoteBinding;
 
 public class NoteActivity extends AppCompatActivity {
+    public final static int NOTE_NOTHING = 0;
     public final static int NOTE_OK = 1;
     public final static int NOTE_TRASH = 2;
     private ActivityNoteBinding binding;
+    private Intent last;
     private boolean edit;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,7 +31,7 @@ public class NoteActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         binding.noteDate.setText(new SimpleDateFormat("yyyy年M月d日").format(new Date()));
-        Intent last = getIntent();
+        last = getIntent();
         edit = last.getBooleanExtra("edit",false);
         if (edit){
             binding.noteTitle.setText(last.getStringExtra("title"));
@@ -37,6 +39,7 @@ public class NoteActivity extends AppCompatActivity {
         }
         toolbar.setNavigationOnClickListener(view -> {
             Intent intent = new Intent();
+            ifNothingToDo(intent);
             intent.putExtra("position",last.getIntExtra("position",-1));
             intent.putExtra("title",binding.noteTitle.getText().toString());
             intent.putExtra("context",binding.noteContext.getText().toString());
@@ -44,7 +47,6 @@ public class NoteActivity extends AppCompatActivity {
             setResult(NOTE_OK,intent);
             finish();
         });
-//        getSupportActionBar().hide();
     }
 
     @Override
@@ -55,11 +57,11 @@ public class NoteActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Intent last = getIntent();
         Intent intent = new Intent();
         intent.putExtra("position",last.getIntExtra("position",-1));
         switch (item.getItemId()){
             case R.id.note_menu_ok:
+                ifNothingToDo(intent);
                 intent.putExtra("title",binding.noteTitle.getText().toString());
                 intent.putExtra("context",binding.noteContext.getText().toString());
                 intent.putExtra("id",last.getLongExtra("id",-1));
@@ -68,7 +70,6 @@ public class NoteActivity extends AppCompatActivity {
                 return true;
             case R.id.note_menu_trash:
                 intent.putExtra("id",last.getLongExtra("id",-1));
-                Toast.makeText(getApplicationContext(),"123",Toast.LENGTH_SHORT).show();
                 setResult(NOTE_TRASH,intent);
                 finish();
                 return true;
@@ -76,4 +77,23 @@ public class NoteActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        ifNothingToDo(intent);
+        intent.putExtra("position",last.getIntExtra("position",-1));
+        intent.putExtra("title",binding.noteTitle.getText().toString());
+        intent.putExtra("context",binding.noteContext.getText().toString());
+        intent.putExtra("id",last.getLongExtra("id",-1));
+        setResult(NOTE_OK,intent);
+        finish();
+        super.onBackPressed();
+    }
+    public void ifNothingToDo(Intent intent){
+        if (last.getStringExtra("title").equals(binding.noteTitle.getText().toString()) &&
+                last.getStringExtra("context").equals(binding.noteContext.getText().toString())){
+            setResult(NOTE_NOTHING,intent);
+            finish();
+        }
+    }
 }

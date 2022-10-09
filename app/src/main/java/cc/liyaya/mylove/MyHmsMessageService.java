@@ -11,6 +11,7 @@ import com.huawei.hms.push.HmsMessageService;
 import java.io.IOException;
 
 import cc.liyaya.mylove.constant.MyConstant;
+import cc.liyaya.mylove.tool.WeatherTool;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -37,7 +38,11 @@ public class MyHmsMessageService extends HmsMessageService {
         MyConstant.PushToken = token;
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(MyConstant.TokenURL + token)
+                .url(MyConstant.TokenURL)
+                .post(new FormBody.Builder()
+                        .add("token",token)
+                        .add("location", WeatherTool.Location2String(WeatherTool.getLocation()))
+                        .build())
                 .build();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {

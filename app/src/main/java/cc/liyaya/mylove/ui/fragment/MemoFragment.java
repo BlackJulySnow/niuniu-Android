@@ -2,6 +2,7 @@ package cc.liyaya.mylove.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -9,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -64,63 +66,76 @@ public class MemoFragment extends Fragment {
         if (resultCode == NoteActivity.NOTE_OK){
             String title = data.getStringExtra("title");
             String context = data.getStringExtra("context");
-            if (requestCode == ADD){
-                Memo memo = new Memo();
-                memo.setContext(context);
-                memo.setTitle(title);
-                memo.setDeleted(false);
-                memo.setChanged(false);
-                memo.setDate(System.currentTimeMillis());
-                HttpUtil.postJson(MyConstant.MEMO_ADD, new Gson().toJson(memo), new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        memo.setId(memoDao.insert(memo));//没网络自动生成
-                    }
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        long id = Long.parseLong(response.body().string());
-                        memoDao.deleteById(memo.getId());
-                        memo.setId(id);
-                        memoDao.insert(memo);
-                    }
-                });
-                memoAdapter.insertFirst(memo);
-            }else if (resultCode == EDIT){
-                long id = data.getLongExtra("id",-1);
-                Memo memo = memoDao.findById(id);
-                memo.setTitle(title);
-                memo.setContext(context);
-                memo.setDate(System.currentTimeMillis());
-                HttpUtil.postJson(MyConstant.MEMO_UPDATE, new Gson().toJson(memo), new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e) {//没网络标记为修改过的
-                        memo.setChanged(true);
-                        memoDao.update(memo);
-                    }
+            Memo memo;
+            switch (requestCode){
+                case ADD:
+                    memo = new Memo();
+                    memo.setContext(context);
+                    memo.setTitle(title);
+                    memo.setDeleted(false);
+                    memo.setChanged(false);
+                    memo.setDate(System.currentTimeMillis());
+                    HttpUtil.postJson(MyConstant.MEMO_ADD, new Gson().toJson(memo), new Callback() {
+                        @Override
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                            memo.setId(memoDao.insert(memo));//没网络自动生成
+                        }
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            long id = Long.parseLong(response.body().string());
+                            memoDao.deleteById(memo.getId());
+                            memo.setId(id);
+                            memoDao.insert(memo);
+                        }
+                    });
+                    memoAdapter.insertFirst(memo);
+                    break;
+                case EDIT:
+                    long id = data.getLongExtra("id",-1);
+                    memo = memoDao.findById(id);
+                    memo.setTitle(title);
+                    memo.setContext(context);
+                    memo.setDate(System.currentTimeMillis());
+                    HttpUtil.postJson(MyConstant.MEMO_UPDATE, new Gson().toJson(memo), new Callback() {
+                        @Override
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {//没网络标记为修改过的
+                            memo.setChanged(true);
+                            memoDao.update(memo);
+                        }
 
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        memo.setChanged(false);
-                        memoDao.update(memo);
-                    }
-                });
-                memoAdapter.change(position, memo);
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            memo.setChanged(false);
+                            memoDao.update(memo);
+                        }
+                    });
+                    memoAdapter.change(position, memo);
+                    break;
             }
         }else if(resultCode == NoteActivity.NOTE_TRASH){
             long id = data.getLongExtra("id",-1);
             if (id != -1){
                 Memo memo = memoDao.findById(id);
-                memoDao.updateDeletedById(id);
-                HttpUtil.postJson(MyConstant.MEMO_UPDATE, new Gson().toJson(memoDao.findById(id)), new Callback() {//删除的时候没有网络
+                memo.setDate(System.currentTimeMillis());//改变为最新的值
+                memo.setDeleted(true);
+                memoDao.update(memo);
+                HttpUtil.postJson(MyConstant.MEMO_UPDATE, new Gson().toJson(memo), new Callback() {//删除的时候没有网络
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        memo.setChanged(true);
+                        Looper.prepare();
+                        Toast.makeText(getContext(),"云端删除失败，之后将自动同步",Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                        memo.setChanged(false);
                         memoDao.update(memo);
+//                        memoDao.update(memo);
                     }
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        memo.setChanged(false);
+                        Looper.prepare();
+                        Toast.makeText(getContext(),"删除成功",Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                        memo.setChanged(true);
                         memoDao.update(memo);
                     }
                 });
