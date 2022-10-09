@@ -15,9 +15,10 @@ public class HttpUtil {
     public static String post(String url, Map<String, String> map) throws IOException {
         OkHttpClient client = new OkHttpClient();
         FormBody.Builder body = new FormBody.Builder();
-        for (Map.Entry<String,String> item : map.entrySet()){
-            body.add(item.getKey(),item.getValue());
-        }
+        if (map != null)
+            for (Map.Entry<String,String> item : map.entrySet())
+                body.add(item.getKey(),item.getValue());
+
         Request request = new Request.Builder()
                 .url(url)
                 .post(body.build())

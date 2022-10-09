@@ -21,6 +21,7 @@ import androidx.navigation.ui.NavigationUI;
 import cc.liyaya.mylove.R;
 import cc.liyaya.mylove.databinding.ActivityMainBinding;
 import cc.liyaya.mylove.thread.ClassThread;
+import cc.liyaya.mylove.thread.DormThread;
 import cc.liyaya.mylove.thread.MemoThread;
 import cc.liyaya.mylove.thread.WeatherThread;
 
@@ -39,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         new Thread(new ClassThread()).start();
-        new Thread(new WeatherThread(this)).start();
         new Thread(new MemoThread()).start();
+        new Thread(new DormThread()).start();
+        new Thread(new WeatherThread(this)).start();
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_class_table, R.id.navigation_dashboard, R.id.navigation_center)
                 .build();

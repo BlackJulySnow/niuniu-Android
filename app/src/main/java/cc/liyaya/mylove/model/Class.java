@@ -1,11 +1,20 @@
 package cc.liyaya.mylove.model;
 
-import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
 public class Class {
+
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public long getDate() {
         return date;
     }
@@ -30,27 +39,20 @@ public class Class {
         this.name = name;
     }
 
-    public int getNum() {
-        return num;
-    }
-
-    public void setNum(int num) {
-        this.num = num;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
     public String getClassroom() {
         return classroom;
     }
 
     public void setClassroom(String classroom) {
         this.classroom = classroom;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 
     @PrimaryKey(autoGenerate = true)

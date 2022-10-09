@@ -11,15 +11,18 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import cc.liyaya.mylove.dao.ClassDao;
+import cc.liyaya.mylove.dao.DormDao;
 import cc.liyaya.mylove.dao.MemoDao;
 import cc.liyaya.mylove.dao.WeatherDao;
 import cc.liyaya.mylove.model.Class;
+import cc.liyaya.mylove.model.Dorm;
 import cc.liyaya.mylove.model.Memo;
 import cc.liyaya.mylove.model.Weather;
 
-@Database(entities = {Class.class, Weather.class, Memo.class},
-        version = 2,autoMigrations = {
-        @AutoMigration (from = 1, to = 2)
+@Database(entities = {Class.class, Weather.class, Memo.class, Dorm.class},
+        version = 3,autoMigrations = {
+        @AutoMigration (from = 1, to = 2),
+        @AutoMigration (from = 2, to = 3)
     })
 public abstract class DatabaseUsage extends RoomDatabase {
     public abstract ClassDao classDao();
@@ -27,6 +30,8 @@ public abstract class DatabaseUsage extends RoomDatabase {
     public abstract WeatherDao weatherDao();
 
     public abstract MemoDao memoDao();
+
+    public abstract DormDao dormDao();
 
     private static final String DB_NAME = "NiuNiu.db";
     private static volatile DatabaseUsage instance;
@@ -47,10 +52,4 @@ public abstract class DatabaseUsage extends RoomDatabase {
 //                .addMigrations(MIGRATION_1_2)
                 .build();
     }
-    public static Migration MIGRATION_1_2 = new Migration(1, 2) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
-            database.execSQL("ALTER TABLE 'memo' ADD COLUMN 'changed' INTEGER NOT NULL DEFAULT 0");
-        }
-    };
 }

@@ -15,18 +15,25 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import cc.liyaya.mylove.R;
+import cc.liyaya.mylove.adapter.DormAdapter;
+import cc.liyaya.mylove.adapter.MemoAdapter;
 import cc.liyaya.mylove.constant.MyConstant;
 import cc.liyaya.mylove.dao.ClassDao;
 import cc.liyaya.mylove.dao.WeatherDao;
 import cc.liyaya.mylove.database.DatabaseUsage;
 import cc.liyaya.mylove.databinding.FragmentClassTableBinding;
 import cc.liyaya.mylove.model.Class;
+import cc.liyaya.mylove.model.Memo;
 import cc.liyaya.mylove.model.Weather;
 import cc.liyaya.mylove.tool.DateUtil;
 import cc.liyaya.mylove.tool.HttpUtil;
@@ -71,6 +78,8 @@ public class ClassTableFragment extends Fragment {
                     addClass(MyConstant.CLASS_EMBEDDING[cls.getNum()], i + 1, StringUtil.append2(cls.getName()),cls.getPlace()+cls.getClassroom());
                 }
         }
+        initDorm();
+
 
         return root;
     }
@@ -142,5 +151,12 @@ public class ClassTableFragment extends Fragment {
                 Looper.loop();
             }
         });
+    }
+    public void initDorm(){
+        RecyclerView recyclerView = binding.dormRecycle;
+        GridLayoutManager manager = new GridLayoutManager(getContext(),3);
+        DormAdapter dormAdapter = new DormAdapter(DatabaseUsage.getInstance(getContext()).dormDao().queryAll());
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setAdapter(dormAdapter);
     }
 }
