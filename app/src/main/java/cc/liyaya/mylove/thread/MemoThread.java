@@ -41,7 +41,7 @@ public class MemoThread implements Runnable{
                 List<Memo> changedMemos = memoDao.getChanged();
                 for (Memo memo : changedMemos){//上传修改过的
                     Log.e(TAG,new Gson().toJson(memo));
-                    HttpUtil.postJson(MyConstant.MEMO_UPDATE, new Gson().toJson(memo));
+                    HttpUtil.postJson(MyConstant.MEMO_INSERT, new Gson().toJson(memo));
                     memo.setChanged(false);
                     memoDao.insert(memo);
                 }
@@ -57,16 +57,18 @@ public class MemoThread implements Runnable{
                         if (remoteMemo.getDate() > localMemo.getDate()){//远程文件比较新
                             memoDao.update(remoteMemo);
                     }else if (remoteMemo.getDate() < localMemo.getDate()){//本地文件比较新
-                            HttpUtil.postJson(MyConstant.MEMO_UPDATE,new Gson().toJson(localMemo));
+                            HttpUtil.postJson(MyConstant.MEMO_INSERT,new Gson().toJson(localMemo));
                         }
                     }
                 }
                 for (int i = 0;i < flags.length;i++){
                     if (!flags[i]){
+                        long id = localMemos.get(i).getId();
+                        localMemos.get(i).setId(0);
                         Log.e(TAG,new Gson().toJson(localMemos.get(i)));
-                        long id = Long.parseLong(HttpUtil.postJson(MyConstant.MEMO_ADD,new Gson().toJson(localMemos.get(i))));
-                        memoDao.deleteById(localMemos.get(i).getId());
-                        localMemos.get(i).setId(id);
+                        long newID = Long.parseLong(HttpUtil.postJson(MyConstant.MEMO_INSERT,new Gson().toJson(localMemos.get(i))));
+                        memoDao.deleteById(id);//删除老id
+                        localMemos.get(i).setId(newID);
                         memoDao.insert(localMemos.get(i));
                     }
                 }

@@ -8,12 +8,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.util.List;
-
 import cc.liyaya.mylove.MyApplication;
 import cc.liyaya.mylove.R;
 import cc.liyaya.mylove.constant.MyConstant;

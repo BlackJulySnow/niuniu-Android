@@ -75,10 +75,10 @@ public class MemoFragment extends Fragment {
                     memo.setDeleted(false);
                     memo.setChanged(false);
                     memo.setDate(System.currentTimeMillis());
-                    HttpUtil.postJson(MyConstant.MEMO_ADD, new Gson().toJson(memo), new Callback() {
+                    HttpUtil.postJson(MyConstant.MEMO_INSERT, new Gson().toJson(memo), new Callback() {
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            memo.setId(memoDao.insert(memo));//没网络自动生成
+                            memoDao.insert(memo);//没网络自动生成
                         }
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
@@ -96,7 +96,7 @@ public class MemoFragment extends Fragment {
                     memo.setTitle(title);
                     memo.setContext(context);
                     memo.setDate(System.currentTimeMillis());
-                    HttpUtil.postJson(MyConstant.MEMO_UPDATE, new Gson().toJson(memo), new Callback() {
+                    HttpUtil.postJson(MyConstant.MEMO_INSERT, new Gson().toJson(memo), new Callback() {
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {//没网络标记为修改过的
                             memo.setChanged(true);
@@ -119,22 +119,15 @@ public class MemoFragment extends Fragment {
                 memo.setDate(System.currentTimeMillis());//改变为最新的值
                 memo.setDeleted(true);
                 memoDao.update(memo);
-                HttpUtil.postJson(MyConstant.MEMO_UPDATE, new Gson().toJson(memo), new Callback() {//删除的时候没有网络
+                HttpUtil.postJson(MyConstant.MEMO_INSERT, new Gson().toJson(memo), new Callback() {//删除的时候没有网络
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        Looper.prepare();
-                        Toast.makeText(getContext(),"云端删除失败，之后将自动同步",Toast.LENGTH_SHORT).show();
-                        Looper.loop();
                         memo.setChanged(false);
                         memoDao.update(memo);
-//                        memoDao.update(memo);
                     }
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        Looper.prepare();
-                        Toast.makeText(getContext(),"删除成功",Toast.LENGTH_SHORT).show();
-                        Looper.loop();
                         memo.setChanged(true);
                         memoDao.update(memo);
                     }

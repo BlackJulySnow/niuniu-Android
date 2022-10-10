@@ -20,8 +20,14 @@ public interface ClassDao {
     @Delete
     void delete(Class clazz);
 
+    @Delete
+    void delete(List<Class> classes);
+
     @Insert
     void insert(Class... classes);
+
+    @Insert
+    void insert(List<Class> classes);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insert(Class clazz);
@@ -35,4 +41,8 @@ public interface ClassDao {
     Class getByDateAndNum(long date,long num);
     @Query("SELECT * FROM class WHERE date = :date")
     List<Class> queryByDate(long date);
+
+    @Query("DELETE FROM class WHERE date >= :date")
+    void deleteByDateGreaterThanEqual(long date);
+
 }

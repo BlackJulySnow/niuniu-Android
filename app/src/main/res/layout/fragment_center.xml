@@ -18,7 +18,7 @@
             android:orientation="horizontal"
             android:paddingTop="0dp"
             android:paddingLeft="15dp"
-            android:paddingBottom="15dp"
+            android:paddingBottom="10dp"
             android:paddingRight="15dp">
             <ImageView
                 android:id="@+id/center_icon"

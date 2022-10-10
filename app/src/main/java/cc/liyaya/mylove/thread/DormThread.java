@@ -8,15 +8,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-
 import cc.liyaya.mylove.MyApplication;
 import cc.liyaya.mylove.constant.MyConstant;
 import cc.liyaya.mylove.database.DatabaseUsage;
 import cc.liyaya.mylove.model.Dorm;
-import cc.liyaya.mylove.model.Memo;
-import cc.liyaya.mylove.tool.HttpUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -40,8 +36,7 @@ public class DormThread implements Runnable{
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 String res = response.body().string();
-                Gson gson = new Gson();
-                List<Dorm> dorms = gson.fromJson(res,new TypeToken<List<Dorm>>(){}.getType());
+                List<Dorm> dorms = new Gson().fromJson(res,new TypeToken<List<Dorm>>(){}.getType());
                 DatabaseUsage.getInstance(MyApplication.getContext()).dormDao().insert(dorms);
                 Log.e(TAG,res);
             }

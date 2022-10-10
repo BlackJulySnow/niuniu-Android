@@ -90,6 +90,8 @@ public class NoteActivity extends AppCompatActivity {
         super.onBackPressed();
     }
     public void ifNothingToDo(Intent intent){
+        if (last.getStringExtra("title") == null || last.getStringExtra("context") == null)
+            return;
         if (last.getStringExtra("title").equals(binding.noteTitle.getText().toString()) &&
                 last.getStringExtra("context").equals(binding.noteContext.getText().toString())){
             setResult(NOTE_NOTHING,intent);

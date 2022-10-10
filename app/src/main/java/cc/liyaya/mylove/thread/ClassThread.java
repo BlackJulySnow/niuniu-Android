@@ -15,6 +15,7 @@ import cc.liyaya.mylove.constant.MyConstant;
 import cc.liyaya.mylove.dao.ClassDao;
 import cc.liyaya.mylove.database.DatabaseUsage;
 import cc.liyaya.mylove.model.Class;
+import cc.liyaya.mylove.tool.DateUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -38,25 +39,15 @@ public class ClassThread implements Runnable{
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 try {
+                    //自动获取最新课表
                     ClassDao classDao = DatabaseUsage.getInstance(MyApplication.getContext()).classDao();
+                    classDao.deleteByDateGreaterThanEqual(DateUtil.getToday());
+                    Log.e(TAG, String.valueOf(classDao.getAll().size()));
                     List<Class> list = new Gson().fromJson(response.body().string(),new TypeToken<List<Class>>(){}.getType());
-                    int i = 0;
-                    for (Class cls : list){
-                        Class res = classDao.getByDateAndNum(cls.getDate(),cls.getNum());
-                        if (res == null){
-                            classDao.insert(cls);
-                            i = i + 1;
-//                            insertDate.add(cls);
-                        }else{
-                            cls.setId(res.getId());
-                            classDao.update(cls);
-                        }
-                    }
-                    Log.e(TAG, i + "/" + list.size());
+                    classDao.insert(list);
                 }catch (IOException e){
                     Log.e(TAG,"储存课表失败");
                 }
-
             }
         });
     }
