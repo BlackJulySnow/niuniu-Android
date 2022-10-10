@@ -32,6 +32,6 @@ public class DateUtil {
     }
     public static int getMonth(){
         Calendar calendar = Calendar.getInstance();
-        return calendar.get(Calendar.MONTH);
+        return calendar.get(Calendar.MONTH) + 1;
     }
 }
