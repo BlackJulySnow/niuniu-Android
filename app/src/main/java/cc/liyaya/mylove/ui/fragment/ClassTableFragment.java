@@ -1,13 +1,16 @@
 package cc.liyaya.mylove.ui.fragment;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,24 +19,25 @@ import androidx.cardview.widget.CardView;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+
 import cc.liyaya.mylove.R;
 import cc.liyaya.mylove.adapter.DormAdapter;
-import cc.liyaya.mylove.adapter.MemoAdapter;
 import cc.liyaya.mylove.constant.MyConstant;
 import cc.liyaya.mylove.dao.ClassDao;
 import cc.liyaya.mylove.dao.WeatherDao;
 import cc.liyaya.mylove.database.DatabaseUsage;
 import cc.liyaya.mylove.databinding.FragmentClassTableBinding;
 import cc.liyaya.mylove.model.Class;
-import cc.liyaya.mylove.model.Memo;
 import cc.liyaya.mylove.model.Weather;
 import cc.liyaya.mylove.tool.DateUtil;
 import cc.liyaya.mylove.tool.HttpUtil;
@@ -46,40 +50,24 @@ import okhttp3.Response;
 public class ClassTableFragment extends Fragment {
     private String TAG = "HomeFragment";
     private FragmentClassTableBinding binding;
-
+    private WeatherDao weatherDao;
+    private ClassDao classDao;
+    private ArrayList<View> itemView = new ArrayList<>();
+    private int year,month,day;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentClassTableBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        weatherDao = DatabaseUsage.getInstance(getContext()).weatherDao();
+        classDao = DatabaseUsage.getInstance(getContext()).classDao();
+        Calendar calendar = Calendar.getInstance(Locale.CHINA);
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH) + 1;
+        day = calendar.get(Calendar.DAY_OF_MONTH);
         initMenu();
-        binding.classYear.setText(String.valueOf(DateUtil.getYear()));
-        binding.classMonth.setText(String.format("%d",(DateUtil.getMonth())) + "月");
-        long monday = DateUtil.getMonday();
-        long today = DateUtil.getToday();
-        if (today == monday + DateUtil.dayTime * 6) {//如果今天是周日，显示下周课表
-            monday = monday + DateUtil.dayTime * 7;
-        }
-        WeatherDao dao = DatabaseUsage.getInstance(getContext()).weatherDao();
-        ClassDao classDao = DatabaseUsage.getInstance(getContext()).classDao();
-        for (int i = 0;i < 6;i++){
-            long thisDay = monday + DateUtil.dayTime * i;
-            Weather weather = dao.get(thisDay);
-            if (weather != null)
-                addWeather(i + 1,weather.getIcon(),weather.getMinTemp() + "-" + weather.getMaxTemp());
-            else
-                addWeather(i + 1, "100", "11-12");
-
-            addWeekDaily(i + 1, MyConstant.WEEK[i + 1], new SimpleDateFormat("dd").format(new Date(thisDay)),today == thisDay);
-            List<Class> classes = classDao.queryByDate(thisDay);
-//
-            if (classes != null)
-                for (Class cls : classes){
-                    addClass(MyConstant.CLASS_EMBEDDING[cls.getNum()], i + 1, StringUtil.append2(cls.getName()),cls.getPlace()+cls.getClassroom());
-                }
-        }
+        initClassTable(DateUtil.getToday());
         initDorm();
-
 
         return root;
     }
@@ -91,6 +79,7 @@ public class ClassTableFragment extends Fragment {
         GridLayout.Spec columnSpec = GridLayout.spec(j, 1.0f);
         ((TextView) view.findViewById(R.id.class_name)).setText(className);
         GridLayout.LayoutParams params = new GridLayout.LayoutParams(rowSpec, columnSpec);
+        itemView.add(view);
         binding.homeGrid.addView(view, params);
     }
 
@@ -103,6 +92,7 @@ public class ClassTableFragment extends Fragment {
         ((TextView) view.findViewById(R.id.item_week)).setText(week);
         ((TextView) view.findViewById(R.id.item_day)).setText(day);
         GridLayout.LayoutParams params = new GridLayout.LayoutParams(rowSpec, columnSpec);
+        itemView.add(view);
         binding.homeGrid.addView(view, params);
     }
 
@@ -113,6 +103,7 @@ public class ClassTableFragment extends Fragment {
         view.findViewById(R.id.item_day).setBackgroundResource(ResourceTool.getDrawableId("weather_" + icon));
         ((TextView) view.findViewById(R.id.item_temp)).setText(text);
         GridLayout.LayoutParams params = new GridLayout.LayoutParams(rowSpec, columnSpec);
+        itemView.add(view);
         binding.homeGrid.addView(view, params);
     }
     public void initMenu(){
@@ -128,6 +119,18 @@ public class ClassTableFragment extends Fragment {
                 switch (menuItem.getItemId()){
                     case R.id.push_test:
                         pushTest();
+                        return true;
+                    case R.id.calendar:
+                        new DatePickerDialog(getContext(), (datePicker, i, i1, i2) -> {
+                            for (View view : itemView) {
+                                binding.homeGrid.removeView(view);
+                            }
+                            itemView.clear();
+                            Calendar c = Calendar.getInstance();
+                            c.set(i,i1,i2,0,0,0);
+                            year = i; month = i1; day = i2;
+                            initClassTable(c.getTimeInMillis() / 1000 * 1000);
+                        },year,month,day).show();
                         return true;
                 }
                 return false;
@@ -151,6 +154,33 @@ public class ClassTableFragment extends Fragment {
                 Looper.loop();
             }
         });
+    }
+    public void initClassTable(long start){
+        binding.classYear.setText(String.valueOf(DateUtil.getYear(start)));
+        binding.classMonth.setText(String.format("%d",(DateUtil.getMonth(start))) + "月");
+        long monday = DateUtil.getMonday(start);
+//        long today = DateUtil.getToday();
+        if (start == monday + DateUtil.dayTime * 6) {//如果今天是周日，显示下周课表
+            monday = monday + DateUtil.dayTime * 7;
+        }
+
+        for (int i = 0;i < 6;i++){
+            long thisDay = monday + DateUtil.dayTime * i;
+            Weather weather = weatherDao.get(thisDay);
+            if (weather != null)
+                addWeather(i + 1,weather.getIcon(),weather.getMinTemp() + "-" + weather.getMaxTemp());
+            else
+                addWeather(i + 1, "100", "查无记录");
+
+            addWeekDaily(i + 1, MyConstant.WEEK[i + 1], new SimpleDateFormat("dd").format(new Date(thisDay)),start == thisDay);
+
+
+            List<Class> classes = classDao.queryByDate(thisDay);
+            if (classes != null)
+                for (Class cls : classes){
+                    addClass(MyConstant.CLASS_EMBEDDING[cls.getNum()], i + 1, StringUtil.append2(cls.getName()),cls.getPlace()+cls.getClassroom());
+                }
+        }
     }
     public void initDorm(){
         RecyclerView recyclerView = binding.dormRecycle;

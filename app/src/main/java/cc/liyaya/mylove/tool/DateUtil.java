@@ -17,21 +17,24 @@ public class DateUtil {
     public static long getToday(){
         Calendar c=Calendar.getInstance(Locale.CHINA);
         c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-        return c.getTime().getTime() / 1000 * 1000;
+        return c.getTimeInMillis() / 1000 * 1000;
     }
-    public static long getMonday(){
-        Calendar c=Calendar.getInstance(Locale.CHINA);
+    public static long getMonday(long date){
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
         c.setFirstDayOfWeek(Calendar.MONDAY);
         c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        return c.getTime().getTime() / 1000 * 1000;
+        return c.getTimeInMillis() / 1000 * 1000;
     }
-    public static int getYear(){
+    public static int getYear(long time){
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
         return calendar.get(Calendar.YEAR);
     }
-    public static int getMonth(){
+    public static int getMonth(long time){
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
         return calendar.get(Calendar.MONTH) + 1;
     }
 }
