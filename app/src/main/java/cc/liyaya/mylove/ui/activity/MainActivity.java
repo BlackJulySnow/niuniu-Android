@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setAutoInitEnabled(true);//推送功能
         setSupportActionBar(binding.toolbarMain);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         new Thread(new ClassThread()).start();
@@ -49,20 +49,15 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-        setAutoInitEnabled(true);
+
         if (!isNotificationEnabled(this)) {
             openPush(MainActivity.this);
             Log.e(TAG, "NO");
         }
     }
     private void setAutoInitEnabled(final boolean isEnable) {
-        if(isEnable){
-            // 设置自动初始化
-            HmsMessaging.getInstance(this).setAutoInitEnabled(true);
-        } else {
-            // 禁止自动初始化
-            HmsMessaging.getInstance(this).setAutoInitEnabled(false);
-        }
+        // 设置自动初始化
+        HmsMessaging.getInstance(this).setAutoInitEnabled(isEnable);
     }
 
 

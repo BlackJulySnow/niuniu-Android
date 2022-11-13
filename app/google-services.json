@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "169799673135",
+    "project_id": "niuniu-treasure-chest",
+    "storage_bucket": "niuniu-treasure-chest.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169799673135:android:67293a2351057817f6adda",
+        "android_client_info": {
+          "package_name": "cc.liyaya.mylove"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "169799673135-ipujvc3p7f6mii8b3f76u7r4bd9feg7d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0KT678OHF5MDHsMiHFh1NOXlRXgJjN1I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "169799673135-ipujvc3p7f6mii8b3f76u7r4bd9feg7d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

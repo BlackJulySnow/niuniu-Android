@@ -141,10 +141,12 @@ public class MemoFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+        memoDao = null;
+        memoAdapter = null;
     }
     public void initRecycleView(){
         RecyclerView recyclerView = binding.recycle;
-        List<Memo> memos = DatabaseUsage.getInstance(getContext()).memoDao().getAllSortByDateNotDelete();
+        List<Memo> memos = memoDao.getAllSortByDateNotDelete();
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         memoAdapter = new MemoAdapter(memos,this);
         recyclerView.setLayoutManager(manager);
