@@ -22,6 +22,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -97,7 +99,10 @@ public class ClassTableFragment extends Fragment {
 
     private void addClass(int i, int j, String className, String toast) {
         CardView view = (CardView)View.inflate(getContext(), R.layout.item_class, null);
-        view.setOnClickListener(view1 -> Toast.makeText(getContext(),toast,Toast.LENGTH_SHORT).show());//显示上课地点
+//        view.setOnClickListener(view1 -> Toast.makeText(getContext(),toast,Toast.LENGTH_SHORT).show());//显示上课地点
+        view.setOnClickListener(view1 -> Snackbar.make(this.getView(),toast,Snackbar.LENGTH_SHORT).setAction("懿懿知道啦", view2 -> {
+
+        }).setActionTextColor(getResources().getColor(R.color.pink)).show());//显示上课地点
         GridLayout.Spec rowSpec = GridLayout.spec(i, 1.0f);
         GridLayout.Spec columnSpec = GridLayout.spec(j, 1.0f);
         ((TextView) view.findViewById(R.id.class_name)).setText(className);
@@ -168,15 +173,17 @@ public class ClassTableFragment extends Fragment {
         HttpUtil.post(MyConstant.PushTestURL, map, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Looper.prepare();
-                Toast.makeText(getContext(),"Error!",Toast.LENGTH_SHORT).show();
-                Looper.loop();
+//                Looper.prepare();
+                Snackbar.make(getView(),"Error!",Snackbar.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(),"Error!",Toast.LENGTH_SHORT).show();
+//                Looper.loop();
             }
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                Looper.prepare();
-                Toast.makeText(getContext(),"发送成功",Toast.LENGTH_SHORT).show();
-                Looper.loop();
+//                Looper.prepare();
+                Snackbar.make(getView(),"发送成功",Snackbar.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(),"发送成功",Toast.LENGTH_SHORT).show();
+//                Looper.loop();
             }
         });
     }

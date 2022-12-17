@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -53,6 +54,7 @@ public class MemoFragment extends Fragment {
         initMenu();
         memoDao = DatabaseUsage.getInstance(getContext()).memoDao();
         initRecycleView();
+
         binding.fab.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), NoteActivity.class);
             startActivityForResult(intent,ADD);
@@ -165,5 +167,4 @@ public class MemoFragment extends Fragment {
             }
         });
     }
-
 }

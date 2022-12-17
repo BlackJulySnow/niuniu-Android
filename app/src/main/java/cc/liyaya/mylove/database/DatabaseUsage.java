@@ -49,7 +49,10 @@ public abstract class DatabaseUsage extends RoomDatabase {
                         DatabaseUsage.class,
                         DB_NAME)
                 .allowMainThreadQueries()
-//                .addMigrations(MIGRATION_1_2)
                 .build();
+    }
+    public static synchronized void destroy(){
+        if (instance != null)
+            instance = null;
     }
 }

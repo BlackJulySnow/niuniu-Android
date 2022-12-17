@@ -19,6 +19,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import cc.liyaya.mylove.R;
+import cc.liyaya.mylove.database.DatabaseUsage;
 import cc.liyaya.mylove.databinding.ActivityMainBinding;
 import cc.liyaya.mylove.thread.ClassThread;
 import cc.liyaya.mylove.thread.DormThread;
@@ -75,5 +76,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onDestroy() {
+        DatabaseUsage.destroy();
+        super.onDestroy();
     }
 }
